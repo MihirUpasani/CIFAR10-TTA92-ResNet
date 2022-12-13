@@ -52,6 +52,10 @@ if __name__ == "__main__":
     # Every batch size is a new model
     device = torch.device("cuda" if torch.cuda.is_available()
                           else "cpu")
+    print(device)
+    print(torch.cuda.current_device())
+    print(torch.cuda.get_device_name())
+    print(torch.cuda.get_device_properties(device))
     model = ResNet50().to(device)
     setParams["params"] = model.parameters()
     optimizer = optim.SGD(**setParams)
@@ -60,11 +64,15 @@ if __name__ == "__main__":
     batchSize = 128
 
     try:
-        currentTA = Basics(model, optimizer, None, lossFunction,
-                           trainingData, testingData, "BatchSize_" + str(batchSize) + "_GPUS_" + str(numGpus), 50)
+        currentTA = Basics(model, optimizer, lrSched, lossFunction,
+                           trainingData, testingData, "BatchSize_" + str(batchSize) + "_GPUS_" + str(numGpus), 92)
 
-        currentTA.trainEpochs(50, True, True, batchSize,
+        currentTA.trainEpochs(500, True, True, batchSize,
                               verbose=True, TTA=True)
+
+        filepath = currentTA.modelName + "_" + \
+            currentTA.TTAMetric + "_" + torch.cuda.get_device_name(0)
+        torch.save(model, filepath)
 
         # Sorry about this ugly looking statement
         # Since we only want to look at training times for the last epoch
