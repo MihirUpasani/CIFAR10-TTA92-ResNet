@@ -223,7 +223,7 @@ class Basics():
                 testingAccuracy, testingLoss = self._evaluateModel()
             else:
                 testingAccuracy, testingLoss = 0, 0
-            self.schedule.step(testingAccuracy)
+            self.schedule.step(testingLoss)
             endTime = time.time()
 
             epochMinutes, epochSeconds = self.__getTime(startTime, endTime)

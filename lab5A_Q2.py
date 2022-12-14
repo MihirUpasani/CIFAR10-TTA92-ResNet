@@ -16,7 +16,7 @@ from utils import Basics, downloadData
 
 # Constants
 ROOT = "./.data"
-LEARNINGRATE = 0.04
+LEARNINGRATE = 0.01
 MOMENTUM = 0.9
 WEIGHTDECAY = 5e-4
 EPOCHS = 2
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     setParams["params"] = model.parameters()
     optimizer = optim.SGD(**setParams)
     lrSched = optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, "max", patience=0, factor=0.5)
+        optimizer, "min", patience=0, factor=0.9)
     batchSize = 128
 
     try:
@@ -71,7 +71,7 @@ if __name__ == "__main__":
                               verbose=True, TTA=True)
 
         filepath = currentTA.modelName + "_" + \
-            currentTA.TTAMetric + "_" + torch.cuda.get_device_name(0)
+            str(currentTA.TTAMetric) + "_" + torch.cuda.get_device_name(0)
         torch.save(model, filepath)
 
         # Sorry about this ugly looking statement
